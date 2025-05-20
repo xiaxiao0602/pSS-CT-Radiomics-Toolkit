@@ -19,7 +19,6 @@
 
 4. **Interpretability Analysis**  
    - SHAP‑based global & individual feature importance  
-   - Publication‑quality plots for insight and reporting
 
 5. **Feature Visualization**  
    - 3D voxel‑level rendering  
@@ -33,17 +32,3 @@
 
 ## 🚀 Quick Start
 
-```bash
-git clone https://github.com/your_username/pSS-CT-Radiomics-Toolkit.git
-cd pSS-CT-Radiomics-Toolkit
-
-# Create environment
-conda env create -f environment.yml
-conda activate pss-ct-toolkit
-
-# Train a model
-python train.py --config configs/xgb.yaml
-
-# Launch the prediction web app
-cd web_app
-python app.py
