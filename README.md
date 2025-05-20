@@ -1,6 +1,6 @@
 # pSS‑CT‑Radiomics‑Toolkit
 
-> A complete end-to-end toolkit for non‑invasive, interpretable early diagnosis of primary Sjögren’s syndrome (pSS) using CT images.
+> A complete toolkit for non‑invasive, interpretable early diagnosis of primary Sjögren’s syndrome (pSS) using CT images.
 
 ---
 
