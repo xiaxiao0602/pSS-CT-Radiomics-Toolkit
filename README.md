@@ -1,62 +1,49 @@
-\section*{pSS-CT-Radiomics-Toolkit}
-\textit{A comprehensive end-to-end toolkit for early diagnosis of primary Sjögren’s syndrome (pSS) based on CT images.}
+# pSS‑CT‑Radiomics‑Toolkit
 
-\subsection*{Key Components}
-\begin{description}[leftmargin=!,labelwidth=\widthof{\bfseries Feature visualization:}]
-  \item[Automatic segmentation:]  
-    nnUNetv2-based scripts for precise segmentation of salivary glands (parotid and submandibular).
-  
-  \item[Feature extraction \& enhancement:]  
-    Extraction of 1,409 radiomic features via PyRadiomics, with data augmentation powered by a conditional variational autoencoder (CVAE).
-  
-  \item[Model training:]  
-    Training and validation pipelines for XGBoost, Random Forest, LightGBM, and ensemble strategies (voting \& stacking).
-  
-  \item[Interpretability analysis:]  
-    SHAP-based tools for global and patient‑level feature importance interpretation and visualization.
-  
-  \item[Feature visualization:]  
-    3D voxel‑level feature rendering and interactive display scripts for in-depth exploration.
-  
-  \item[Web prediction platform:]  
-    Flask application enabling online upload of DICOM/NIfTI files, with automatic segmentation, probability prediction, and SHAP force‑plot generation.
-\end{description}
+> A complete end-to-end toolkit for non‑invasive, interpretable early diagnosis of primary Sjögren’s syndrome (pSS) using CT images.
 
-\subsection*{Getting Started}
-Clone the repository and install dependencies:
-\begin{verbatim}
-git clone https://github.com/yourusername/pSS-CT-Radiomics-Toolkit.git
+---
+
+## 🔍 Features
+
+1. **Automatic Segmentation**  
+   - nnUNetv2‑based accurate delineation of salivary glands (parotid & submandibular)
+
+2. **Feature Extraction & Enhancement**  
+   - PyRadiomics for 1,409 texture features  
+   - Variational autoencoder (CVAE)–based data augmentation
+
+3. **Model Training**  
+   - Algorithms: XGBoost, Random Forest, LightGBM  
+   - Ensemble strategies: Voting & Stacking  
+
+4. **Interpretability Analysis**  
+   - SHAP‑based global & individual feature importance  
+   - Publication‑quality plots for insight and reporting
+
+5. **Feature Visualization**  
+   - 3D voxel‑level rendering  
+   - Interactive visualization scripts
+
+6. **Web Prediction Platform**  
+   - Flask server for DICOM/NIfTI upload  
+   - Automatic segmentation, probability output & SHAP force plots  
+
+---
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/your_username/pSS-CT-Radiomics-Toolkit.git
 cd pSS-CT-Radiomics-Toolkit
-pip install -r requirements.txt
-\end{verbatim}
 
-\subsection*{Usage Examples}
-\begin{itemize}
-  \item \textbf{Segmentation:}
-    \begin{verbatim}
-    python scripts/segment.py \
-      --input path/to/dicom_folder \
-      --output path/to/segmentation.nii.gz
-    \end{verbatim}
-  
-  \item \textbf{Feature Extraction:}
-    \begin{verbatim}
-    python scripts/extract_features.py \
-      --image path/to/ct.nii.gz \
-      --mask path/to/segmentation.nii.gz \
-      --out features.csv
-    \end{verbatim}
-  
-  \item \textbf{Web Deployment:}
-    \begin{verbatim}
-    cd web_app
-    flask run --host=0.0.0.0 --port=5000
-    \end{verbatim}
-\end{itemize}
+# Create environment
+conda env create -f environment.yml
+conda activate pss-ct-toolkit
 
-\subsection*{Contributing}
-Contributions are welcome! Please submit issues and pull requests on GitHub.
+# Train a model
+python train.py --config configs/xgb.yaml
 
-\subsection*{License}
-This project is licensed under the MIT License. See \texttt{LICENSE} for details.
-
+# Launch the prediction web app
+cd web_app
+python app.py
