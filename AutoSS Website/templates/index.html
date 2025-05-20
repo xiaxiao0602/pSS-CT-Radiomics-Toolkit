@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AutoSS - Automatic Diagnosis System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Global styles */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(24, 45, 87, 0.95);
+            padding: 1.2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .nav-container a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container a:hover {
+            background: rgba(0,0,0,0.1);
+            color: #b8e5f5;
+        }
+
+        /* Home section */
+        #home {
+            background-image: url("{{ url_for('static', filename='background_1.webp') }}");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #home::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .home-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .home-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .home-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: rgb(159, 199, 232);
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: rgb(159, 199, 232);
+            color: #f6ed3e;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Upload and Preview sections */
+        #upload, #preview {
+            min-height: 100vh;
+            padding: 100px 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        #upload {
+            background-image: url("{{ url_for('static', filename='background_2.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding-top: 120px;
+        }
+
+        #preview {
+            background-image: url("{{ url_for('static', filename='background_3.png') }}");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .upload-form {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .upload-form input[type="file"] {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        /* Upload section 新样式 */
+        .upload-container {
+            width: 60%;
+            max-width: 600px;
+            margin: 130px 0 0 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .upload-box {
+            border: 2px dashed #74a1fd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #e0eaff;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background-color: #d0e0ff;
+            transform: translateY(-2px);
+        }
+
+        .file-label {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Preview section 新样式 */
+        .preview-box {
+            width: 800px;
+            height: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slider-container {
+            width: 600px;
+            margin: 20px auto;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        /* Result section 新样式 */
+        .result-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 2rem;
+            padding: 0;
+            width: 100%;
+        }
+
+        .result-info {
+            flex: 1;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+            min-height: 500px;
+            min-width: 350px;
+            margin-left: 0;
+        }
+
+        .result-visualization {
+            flex: 1;
+            padding: 2rem;
+            background: rgb(255, 255, 255);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 500px;
+            min-width: 1000px;
+            margin-right: 0;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            background: #c4ddf3;
+            color: #1a365d;
+            margin: 0;
+            text-align: left;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        #predict-button {
+            align-self: center;
+            margin: 0;
+        }
+
+        #shap-plot {
+            margin-bottom: 2rem;
+        }
+
+        #shap-plot img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #feature-mapping {
+            color: #1a365d;
+        }
+
+        #feature-mapping h3 {
+            color: #1a365d;
+            margin-bottom: 1rem;
+        }
+
+        #feature-mapping p {
+            color: #2d4a77;
+            margin: 0.5rem 0;
+            line-height: 1.4;
+        }
+
+        .file-input {
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* 针对不同浏览器的本地化设置 */
+        .file-input::-webkit-file-upload-button {
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .custom-file-label {
+            background: rgb(159, 199, 232);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgb(255, 255, 255);
+        }
+
+        .custom-file-label:hover {
+            background: rgb(139, 179, 212);
+            transform: translateY(-2px);
+        }
+
+        /* 先添加CSS样式 */
+        .rank-text {
+            color: #000000;  /* 深蓝色 */
+        }
+        .feature-text {
+            color: #1a5da4;  /* 中蓝色 */
+        }
+        .direction-increases {
+            color: #fc0d75;  /* 红色 */
+        }
+        .direction-decreases {
+            color: #5bb0ff;  /* 蓝色 */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#upload">Upload</a></li>
+            <li><a href="#preview">Results</a></li>
+        </ul>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home">
+        <div class="home-content">
+            <h1 class="home-title">Automatic Diagnosis of Sjögren's Syndrome</h1>
+            <p class="home-subtitle">
+                AutoSS utilizes advanced CT imaging technology to achieve automatic segmentation 
+                of salivary glands, significantly improving the diagnosis and treatment of 
+                Sjögren's syndrome.
+            </p>
+            <a href="#upload" class="btn">Start Analysis</a>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload">
+        <div class="upload-container">
+            <h2>Upload CT Image</h2>
+            <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
+                <div class="upload-box">
+                    <label class="file-label">Original CT Image:</label>
+                    <div class="custom-file-upload">
+                        <input type="file" name="image" accept=".nii,.nii.gz" required id="file-input" style="display: none;">
+                        <label for="file-input" class="custom-file-label">Choose File</label>
+                        <span id="file-name">No file chosen</span>
+                    </div>
+                    <p>Please upload .nii.gz format file</p>
+                </div>
+                <button type="submit" class="btn" style="background-color: rgb(12, 25, 76);">Start Analysis</button>
+                
+                <!-- 新增预设案例按钮 -->
+                <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <p style="font-weight: bold; margin-bottom: 10px; color: #000000;">Due to the computing power of our web server, it is difficult to run 3D segmentation models, you can use these example cases:</p>
+                    <button type="button" id="case1-btn" class="btn" style="background-color: rgb(52, 105, 176); margin-right: 10px;">Case 1</button>
+                    <button type="button" id="case2-btn" class="btn" style="background-color: rgb(52, 105, 176);">Case 2</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Preview Section -->
+    <section id="preview">
+        <h2>Result Preview</h2>
+        <div class="preview-box">
+            <canvas id="axial-view"></canvas>
+        </div>
+        <div class="slider-container">
+            <label for="axial-slider">Zoom Level: </label>
+            <input type="range" id="axial-slider" class="slider" min="0.5" max="5" value="1" step="0.1">
+        </div>
+        <div class="result-container">
+            <div class="result-info">
+                <div id="success-message" class="status-message">
+                    Waiting for analysis...
+                </div>
+                <button id="predict-button" class="btn" disabled>Start Prediction</button>
+                <p style="color: #ff0000; font-size: 14px; margin-top: 5px; text-align: center;">Don't predict until the image is loaded</p>
+                <div id="predict-result" class="status-message">
+                    Waiting for prediction result...
+                </div>
+            </div>
+            <div class="result-visualization">
+                <div id="shap-plot"></div>
+                <div id="feature-mapping"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 引入 vtk.js -->
+    <script src="https://unpkg.com/vtk.js"></script>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 文件上传处理
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                // 显示上传中消息
+                document.getElementById('success-message').textContent = '上传文件中...';
+                
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 先跳转到预览部分
+                    document.querySelector('#preview').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                    
+                    // 然后初始化预览
+                    setTimeout(() => {
+                        initializePreview(data.save_time);
+                    }, 500); // 添加短暂延迟确保滚动完成
+                    
+                    // 自动开始特征提取
+                    await startFeatureExtraction(data.save_time);
+                } else {
+                    alert('Upload failed: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed. Please try again.');
+            }
+        });
+
+        // 文件选择处理
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        // 预览相关函数
+        let fullScreenRenderer;
+        let renderer;
+        let renderWindow;
+        let imageSlice;
+
+        // 添加缓存对象
+        const imageCache = new Map();
+        let currentLayer = 0;
+        let isLoading = false;
+
+        // 在全局变量区域添加
+        let cameraInitialized = false;
+        let labelSlice;
+
+        // 修改全局变量
+        let globalColorLevel;    // 窗位将由后端计算的p5和p95决定
+        let globalColorWindow;   // 窗宽将由后端计算的p5和p95决定
+
+        // 预加载函数
+        async function preloadLayers(saveTime, currentLayer, maxLayer) {
+            const preloadRange = 5; // 预加载前后5层
+            const promises = [];
+            
+            for (let i = -preloadRange; i <= preloadRange; i++) {
+                const layer = currentLayer + i;
+                if (layer >= 0 && layer <= maxLayer && !imageCache.has(layer)) {
+                    promises.push(loadLayerToCache(saveTime, layer));
+                }
+            }
+            
+            await Promise.all(promises);
+        }
+
+        // 加载层数据到缓存
+        async function loadLayerToCache(saveTime, layer) {
+            if (imageCache.has(layer)) {
+                const cachedData = imageCache.get(layer);
+                if (cachedData && cachedData.success) {
+                    return cachedData;
+                }
+                // 如果缓存的数据无效，从缓存中移除
+                imageCache.delete(layer);
+            }
+            
+            try {
+                const response = await fetch(
+                    `/get_layer?layer=${layer}&save_time=${saveTime}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load layer data');
+                }
+                
+                // 验证数据完整性
+                if (!data.image || !data.shape) {
+                    throw new Error('Invalid layer data received');
+                }
+                
+                // 缓存有效数据
+                imageCache.set(layer, data);
+                return data;
+            } catch (error) {
+                console.error(`Error loading layer ${layer}:`, error);
+                throw error;
+            }
+        }
+
+        // 使用节流的滚轮事件处理
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+
+        let globalMin, globalMax;
+
+        function initializePreview(saveTime) {
+            fetch(`/get_initial_data?save_time=${saveTime}`)
+                .then(response => response.json())
+                .then(async data => {
+                    if (data.success) {
+                        globalMin = data.global_min;
+                        globalMax = data.global_max;
+                        
+                        // 使用后端计算的窗宽窗位
+                        globalColorWindow = data.window_width;
+                        globalColorLevel = data.window_level;
+                        
+                        const slider = document.getElementById('axial-slider');
+                        slider.min = 0.5;
+                        slider.max = 5;
+                        slider.value = 1;
+                        slider.step = 0.1;
+                        
+                        const maxLayer = data.axial_layers - 1;
+                        
+                        if (!fullScreenRenderer) {
+                            fullScreenRenderer = vtk.Rendering.Misc.vtkFullScreenRenderWindow.newInstance({
+                                background: [0, 0, 0],
+                                rootContainer: document.querySelector('.preview-box'),
+                                containerStyle: {
+                                    height: '800px',
+                                    width: '800px',
+                                    position: 'absolute',
+                                    top: '0',
+                                    left: '0',
+                                    overflow: 'hidden',
+                                },
+                            });
+                            renderer = fullScreenRenderer.getRenderer();
+                            renderWindow = fullScreenRenderer.getRenderWindow();
+                            
+                            // 获取互器并配置
+                            const interactor = renderWindow.getInteractor();
+                            const istyle = vtk.Interaction.Style.vtkInteractorStyleImage.newInstance();
+                            interactor.setInteractorStyle(istyle);
+                            
+                            // 添加加载进度提示
+                            const loadingDiv = document.createElement('div');
+                            loadingDiv.style.cssText = `
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                background: rgba(0, 0, 0, 0.7);
+                                color: white;
+                                padding: 20px;
+                                border-radius: 10px;
+                                z-index: 1000;
+                            `;
+                            document.querySelector('.preview-box').appendChild(loadingDiv);
+
+                            try {
+                                loadingDiv.textContent = 'Loading image data (0%)...';
+                                await preloadAllLayers(saveTime, data.axial_layers - 1, loadingDiv);
+                                
+                                // 计算中间层
+                                const middleLayer = Math.floor((data.axial_layers - 1) / 2);
+                                currentLayer = middleLayer;  // 设置当前层为中间层
+                                
+                                // 确保中间层数据已加载
+                                let initialData = imageCache.get(middleLayer);
+                                if (!initialData) {
+                                    loadingDiv.textContent = 'Loading middle layer...';
+                                    try {
+                                        initialData = await loadLayerToCache(saveTime, middleLayer);
+                                    } catch (error) {
+                                        console.error('Failed to load middle layer:', error);
+                                        throw new Error('Failed to load middle layer');
+                                    }
+                                }
+                                
+                                if (initialData && initialData.success) {
+                                    await displayLayer(initialData);
+                                    document.querySelector('.preview-box').removeChild(loadingDiv);
+                                } else {
+                                    throw new Error('Invalid middle layer data');
+                                }
+                                
+                                loadingDiv.remove();
+
+                                const container = fullScreenRenderer.getContainer();
+                                const maxLayer = data.axial_layers - 1;
+                                
+                                // 添加滚轮事件监听器
+                                container.addEventListener('wheel', throttle(async (e) => {
+                                    if (!isDragging) {  // 确保不在拖动时触发
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        
+                                        const skipLayers = 10; // 与preloadAllLayers中的skipLayers保持一致
+                                        const direction = e.deltaY > 0 ? 1 : -1;
+                                        
+                                        // 计算下一个可显示的层
+                                        let nextLayer = currentLayer;
+                                        if (direction > 0) {
+                                            // 向上滚动，找到下一个10的倍数
+                                            nextLayer = Math.ceil((currentLayer + 1) / skipLayers) * skipLayers;
+                                        } else {
+                                            // 向下滚动，找到上一个10的倍数
+                                            nextLayer = Math.floor(currentLayer / skipLayers) * skipLayers;
+                                            if (nextLayer === currentLayer) {
+                                                nextLayer -= skipLayers;
+                                            }
+                                        }
+                                        
+                                        // 确保在有效范围内
+                                        if (nextLayer >= 0 && nextLayer <= maxLayer) {
+                                            try {
+                                                const layerData = imageCache.get(nextLayer);
+                                                if (layerData && layerData.success) {
+                                                    await displayLayer(layerData);
+                                                    currentLayer = nextLayer;
+                                                }
+                                            } catch (error) {
+                                                console.error(`Error displaying layer ${nextLayer}:`, error);
+                                            }
+                                        }
+                                    }
+                                }, 50), { passive: false });
+
+                                // 添加中键拖动功能
+                                let isDragging = false;
+                                let previousPosition = null;
+
+                                container.addEventListener('mousedown', (e) => {
+                                    if (e.button === 1) { // 中键
+                                        e.preventDefault();
+                                        isDragging = true;
+                                        previousPosition = {
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        };
+                                    }
+                                });
+
+                                container.addEventListener('mousemove', (e) => {
+                                    if (isDragging && previousPosition) {
+                                        e.preventDefault();
+                                        const camera = renderer.getActiveCamera();
+                                        const dx = e.clientX - previousPosition.x;
+                                        const dy = e.clientY - previousPosition.y;
+
+                                        const position = camera.getPosition();
+                                        const focalPoint = camera.getFocalPoint();
+                                        
+                                        const zoomLevel = parseFloat(document.getElementById('axial-slider').value);
+                                        const moveScale = 1.0 / zoomLevel;
+
+                                        const newPosition = [
+                                            position[0] - dx * moveScale,
+                                            position[1] + dy * moveScale,
+                                            position[2]
+                                        ];
+                                        const newFocalPoint = [
+                                            focalPoint[0] - dx * moveScale,
+                                            focalPoint[1] + dy * moveScale,
+                                            focalPoint[2]
+                                        ];
+
+                                        camera.setPosition(...newPosition);
+                                        camera.setFocalPoint(...newFocalPoint);
+
+                                        previousPosition = {
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        };
+
+                                        renderWindow.render();
+                                    }
+                                });
+
+                                container.addEventListener('mouseup', (e) => {
+                                    if (e.button === 1) {
+                                        isDragging = false;
+                                        previousPosition = null;
+                                    }
+                                });
+
+                                container.addEventListener('mouseleave', () => {
+                                    isDragging = false;
+                                    previousPosition = null;
+                                });
+
+                                // 禁用中键的默认行为
+                                container.addEventListener('auxclick', (e) => {
+                                    if (e.button === 1) {
+                                        e.preventDefault();
+                                    }
+                                });
+
+                                // 添加左键拖动调整窗宽窗位的功能
+                                let isLeftDragging = false;
+                                let previousLeftPosition = null;
+
+                                container.addEventListener('mousedown', (e) => {
+                                    if (e.button === 0) { // 左键
+                                        isLeftDragging = true;
+                                        previousLeftPosition = {
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        };
+                                    }
+                                });
+
+                                container.addEventListener('mousemove', (e) => {
+                                    if (isLeftDragging && previousLeftPosition) {
+                                        const dx = e.clientX - previousLeftPosition.x;
+                                        const dy = e.clientY - previousLeftPosition.y;
+
+                                        // 调整窗宽窗位
+                                        globalColorWindow = Math.max(1, globalColorWindow + dx * 2);
+                                        globalColorLevel += dy;
+
+                                        if (imageSlice) {
+                                            const imageProperty = imageSlice.getProperty();
+                                            imageProperty.setColorLevel(globalColorLevel);
+                                            imageProperty.setColorWindow(globalColorWindow);
+                                            renderWindow.render();
+                                        }
+
+                                        previousLeftPosition = {
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        };
+                                    }
+                                });
+
+                                container.addEventListener('mouseup', (e) => {
+                                    if (e.button === 0) {
+                                        isLeftDragging = false;
+                                        previousLeftPosition = null;
+                                    }
+                                });
+
+                                container.addEventListener('mouseleave', () => {
+                                    isLeftDragging = false;
+                                    previousLeftPosition = null;
+                                });
+                            } catch (error) {
+                                loadingDiv.textContent = `Error: ${error.message}`;
+                                console.error('Initialization error:', error);
+                            }
+                        }
+
+                        // 修改滑块事件监听，改为控制缩放
+                        slider.addEventListener('input', debounce((e) => {
+                            if (imageSlice) {
+                                const camera = renderer.getActiveCamera();
+                                const zoomLevel = parseFloat(e.target.value);
+                                const bounds = imageSlice.getBounds();
+                                const baseScale = Math.max(bounds[1] - bounds[0], bounds[3] - bounds[2]) / 2;
+                                camera.setParallelScale(baseScale / zoomLevel);
+                                renderWindow.render();
+                            }
+                        }, 100));
+                    }
+                })
+                .catch(error => {
+                    console.error('Preview initialization error:', error);
+                    const loadingDiv = document.querySelector('.preview-box div');
+                    if (loadingDiv) {
+                        loadingDiv.textContent = `Error: ${error.message}`;
+                    }
+                });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // 显示层数据的函数
+        async function displayLayer(data) {
+            if (!data) return;
+            
+            const { image, label, shape } = data;
+            
+            // 解码原始浮点数图像数据
+            const buffer = Uint8Array.from(atob(image), c => c.charCodeAt(0)).buffer;
+            const rawImageData = new Float32Array(buffer);
+            
+            // 创建图像数据
+            const imageData = vtk.Common.DataModel.vtkImageData.newInstance();
+            imageData.setDimensions(shape[0], shape[1], 1);
+            
+            // 设置原始数据作为标量值
+            const imageScalars = vtk.Common.Core.vtkDataArray.newInstance({
+                name: 'Scalars',
+                values: rawImageData,
+                numberOfComponents: 1,
+            });
+            imageData.getPointData().setScalars(imageScalars);
+
+            // 配置图像映射器
+            const imageMapper = vtk.Rendering.Core.vtkImageMapper.newInstance();
+            imageMapper.setInputData(imageData);
+            
+            if (imageSlice) {
+                renderer.removeViewProp(imageSlice);
+            }
+            imageSlice = vtk.Rendering.Core.vtkImageSlice.newInstance();
+            imageSlice.setMapper(imageMapper);
+            
+            // 设置图像性
+            const imageProperty = imageSlice.getProperty();
+            imageProperty.setColorWindow(globalColorWindow);
+            imageProperty.setColorLevel(globalColorLevel);
+            imageProperty.setInterpolationType(0);
+            
+            // 添加到渲染器
+            renderer.addViewProp(imageSlice);
+
+            // 处理标签显示
+            if (label) {
+                // 解码标签RGB数据
+                const labelBuffer = Uint8Array.from(atob(label), c => c.charCodeAt(0));
+                const labelRGBData = new Uint8Array(labelBuffer);
+
+                // 创建标签图像数据
+                const labelData = vtk.Common.DataModel.vtkImageData.newInstance();
+                labelData.setDimensions(shape[0], shape[1], 1);
+                
+                // 设置RGB数据
+                const labelScalars = vtk.Common.Core.vtkDataArray.newInstance({
+                    name: 'Scalars',
+                    values: labelRGBData,
+                    numberOfComponents: 3,
+                });
+                labelData.getPointData().setScalars(labelScalars);
+
+                // 配置标签映射器
+                const labelMapper = vtk.Rendering.Core.vtkImageMapper.newInstance();
+                labelMapper.setInputData(labelData);
+                
+                if (labelSlice) {
+                    renderer.removeViewProp(labelSlice);
+                }
+                labelSlice = vtk.Rendering.Core.vtkImageSlice.newInstance();
+                labelSlice.setMapper(labelMapper);
+
+                // 设置标签属性（半透明）
+                const labelProperty = labelSlice.getProperty();
+                labelProperty.setOpacity(0.5);
+                labelProperty.setInterpolationType(0);
+
+                // 添加到渲染器
+                renderer.addViewProp(labelSlice);
+            }
+
+            // 如果相机未初始化，设置初始视图
+            if (!cameraInitialized) {
+                const camera = renderer.getActiveCamera();
+                const bounds = imageSlice.getBounds();
+                const center = [
+                    (bounds[0] + bounds[1]) / 2,
+                    (bounds[2] + bounds[3]) / 2,
+                    (bounds[4] + bounds[5]) / 2,
+                ];
+                
+                camera.setParallelProjection(true);
+                camera.setFocalPoint(...center);
+                camera.setPosition(center[0], center[1], center[2] + 1000);
+                camera.setParallelScale(Math.max(shape[0], shape[1]) / 2);
+                
+                renderer.resetCamera();
+                cameraInitialized = true;
+            }
+
+            renderWindow.render();
+        }
+        
+        async function handleFileUpload(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const successMessage = document.getElementById('success-message');
+            const predictButton = document.getElementById('predict-button');
+            
+            try {
+                successMessage.textContent = 'Uploading file...';
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successMessage.textContent = 'Loading preview...';
+                    await initializePreview(data.save_time);
+                    await startFeatureExtraction(data.save_time);
+                } else {
+                    throw new Error(data.message || 'Upload failed');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                successMessage.textContent = `Upload failed: ${error.message}`;
+                predictButton.disabled = true;
+            }
+        }
+        
+        // 特征提取和预测相关函数
+        async function startFeatureExtraction(saveTime, sampleFilesFolder = '') {
+            const successMessage = document.getElementById('success-message');
+            const predictButton = document.getElementById('predict-button');
+            
+            try {
+                successMessage.textContent = 'Extracting radiomics features...';
+                
+                // 构建表单数据，添加sample_files_folder参数
+                const formData = new FormData();
+                formData.append('save_time', saveTime);
+                if (sampleFilesFolder) {
+                    formData.append('sample_files_folder', sampleFilesFolder);
+                }
+                
+                const response = await fetch('/extract_features', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successMessage.textContent = data.message;
+                    predictButton.disabled = false;
+                    
+                    // 添加预测按钮事件监听，传递sample_files_folder参数
+                    predictButton.onclick = () => startPrediction(saveTime, sampleFilesFolder);
+                } else {
+                    throw new Error(data.message || 'Feature extraction failed');
+                }
+            } catch (error) {
+                console.error('Feature extraction error:', error);
+                successMessage.textContent = `Feature extraction failed: ${error.message}`;
+                predictButton.disabled = true;
+            }
+        }
+
+        async function startPrediction(saveTime, sampleFilesFolder = '') {
+            const predictResult = document.getElementById('predict-result');
+            const shapPlot = document.getElementById('shap-plot');
+            const featureMapping = document.getElementById('feature-mapping');
+            
+            try {
+                predictResult.textContent = 'Processing prediction...';
+                const response = await fetch('/start_prediction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ save_time: saveTime, sample_files_folder: sampleFilesFolder })
+                });
+                
+                const data = await response.json();
+                
+                // 显示预测结果
+                predictResult.textContent = data.result;
+                
+                // 显示SHAP图
+                if (data.image_url) {
+                    // 清空原有内容
+                    while (shapPlot.firstChild) {
+                        shapPlot.removeChild(shapPlot.firstChild);
+                    }
+                    
+                    const img = document.createElement('img');
+                    img.src = `data:image/png;base64,${data.image_url}`;
+                    shapPlot.appendChild(img);
+                }
+                
+                // 显示特征映射
+                if (data.feature_mapping) {
+                    // 清空原有内容
+                    while (featureMapping.firstChild) {
+                        featureMapping.removeChild(featureMapping.firstChild);
+                    }
+                    
+                    // 添加标题
+                    const title = document.createElement('h3');
+                    title.textContent = 'Top 5 Important Features:';
+                    featureMapping.appendChild(title);
+                    
+                    // 添加新内容
+                    for (const [rank, feature] of Object.entries(data.feature_mapping)) {
+                        const p = document.createElement('p');
+                        const direction = feature.value > 0 ? 'increases' : 'decreases';
+                        
+                        // 创建三个span元素
+                        const rankSpan = document.createElement('span');
+                        rankSpan.className = 'rank-text';
+                        rankSpan.textContent = `No.${rank}  `;
+                        
+                        const featureSpan = document.createElement('span');
+                        featureSpan.className = 'feature-text';
+                        featureSpan.textContent = `Feature ${feature.plot_index} : ${feature.name}, `;
+                        
+                        const directionSpan = document.createElement('span');
+                        directionSpan.className = direction === 'increases' ? 'direction-increases' : 'direction-decreases';
+                        directionSpan.textContent = `Direction: ${direction}`;
+                        
+                        // 将所有span添加到p元素中
+                        p.appendChild(rankSpan);
+                        p.appendChild(featureSpan);
+                        p.appendChild(directionSpan);
+                        
+                        featureMapping.appendChild(p);
+                    }
+                }
+            } catch (error) {
+                console.error('Prediction error:', error);
+                predictResult.textContent = 'Prediction failed';
+            }
+        }
+
+        // 添加预加载所有层的数
+        async function preloadAllLayers(saveTime, maxLayer, loadingDiv) {
+            const skipLayers = 10; // 每10层加载一层
+            const middleLayer = Math.floor(maxLayer / 2); // 计算中间层
+            
+            try {
+                // 先加载中间层
+                loadingDiv.textContent = 'Loading middle layer...';
+                await loadLayerToCache(saveTime, middleLayer);
+                
+                // 计算需要加载的总层数
+                const layersToLoad = Math.ceil(maxLayer / skipLayers);
+                let loadedCount = 1; // 已经加载了中间层
+                
+                // 然后每隔10层加载一层
+                for (let i = 0; i <= maxLayer; i += skipLayers) {
+                    if (i !== middleLayer) { // 避免重复加载中间层
+                        try {
+                            await loadLayerToCache(saveTime, i);
+                            loadedCount++;
+                            const progress = Math.round((loadedCount / layersToLoad) * 100);
+                            loadingDiv.textContent = `Loading image data (${progress}%)...`;
+                        } catch (error) {
+                            console.error(`Error loading layer ${i}:`, error);
+                            // 继续加载其他层
+                        }
+                    }
+                }
+                
+                // 验证中间层是否成功加载
+                if (!imageCache.has(middleLayer)) {
+                    throw new Error('Middle layer failed to load');
+                }
+                
+                loadingDiv.textContent = 'Loading complete';
+            } catch (error) {
+                console.error('Loading error:', error);
+                loadingDiv.textContent = `Error: ${error.message}`;
+                throw error;
+            }
+        }
+
+        // 预设案例按钮处理
+        document.getElementById('case1-btn').addEventListener('click', async function() {
+            await loadPredefinedCase('case1');
+        });
+        
+        document.getElementById('case2-btn').addEventListener('click', async function() {
+            await loadPredefinedCase('case2');
+        });
+        
+        // 加载预设案例的函数
+        async function loadPredefinedCase(caseId) {
+            try {
+                // 显示加载消息
+                document.getElementById('success-message').textContent = '加载预设案例中...';
+                
+                // 请求加载预设案例
+                const response = await fetch(`/load_predefined_case?case_id=${caseId}`, {
+                    method: 'GET'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 先跳转到预览部分
+                    document.querySelector('#preview').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                    
+                    // 初始化预览 - 与正常上传流程相同
+                    setTimeout(() => {
+                        initializePreview(data.save_time);
+                    }, 500);
+                    
+                    // 开始特征提取 - 与正常上传流程相同
+                    await startFeatureExtraction(data.save_time, data.sample_files_folder);
+                } else {
+                    alert('加载预设案例失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('加载预设案例错误:', error);
+                alert('加载预设案例失败，请重试');
+            }
+        }
+    </script>
+</body>
+</html> 
