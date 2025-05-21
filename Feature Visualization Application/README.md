@@ -1,56 +1,56 @@
-# 3D特征图可视化器
+# 3D Feature Map Visualizer
 
-这个应用程序用于可视化医学影像的3D特征图和ROI（感兴趣区域）掩码，并提供参考示例对比功能。
+This application is designed for visualizing 3D feature maps and ROI (Region of Interest) masks in medical imaging, and provides reference example comparison functionality.
 
-## 功能特点
+## Features
 
-- 加载并可视化3D特征图和ROI掩码
-- 通过下拉菜单选择不同的特征进行可视化
-- 调整特征图的透明度（0.1-0.9）
-- 提供阴性和阳性参考示例对比
-- 交互式3D渲染，支持旋转、缩放和平移
-- 智能缓存机制，提高参考示例加载速度
-- 颜色映射图例显示
-- 坐标轴标注（单位：mm）
+- Load and visualize 3D feature maps and ROI masks  
+- Select different features for visualization via dropdown menu  
+- Adjust feature map opacity (0.1–0.9)  
+- Provide negative and positive reference examples for comparison  
+- Interactive 3D rendering with support for rotation, zooming, and panning  
+- Intelligent caching mechanism for faster reference example loading  
+- Color map legend display  
+- Coordinate axis labeling (unit: mm)
 
-## 安装说明
+## Installation Instructions
 
-本程序包含独立的Python环境，无需系统安装Python即可运行。首次使用时，请按以下步骤操作：
+This program includes a standalone Python environment and can run without requiring Python to be installed on your system. For first-time use, please follow the steps below:
 
-1. 下载并解压本程序包
-2. 双击运行`setup.bat`，等待环境配置完成
-   - 此过程将下载便携版Python 3.9.13
-   - 自动安装所需的所有依赖包
-   - 首次安装可能需要几分钟时间
+1. Download and unzip the program package  
+2. Double-click `setup.bat` and wait for the environment setup to complete  
+   - This process will download a portable version of Python 3.9.13  
+   - It will automatically install all required dependencies  
+   - Initial setup may take a few minutes
 
-## 运行程序
+## Running the Program
 
-完成安装后，启动程序的方法：
+After installation is complete, launch the program using the following steps:
 
-1. 双击运行`start.bat`即可启动程序
-   - 无需配置任何环境变量
-   - 所有依赖都在程序目录中
+1. Double-click `start.bat` to launch the program  
+   - No need to configure any environment variables  
+   - All dependencies are contained within the program directory
 
-## 使用说明
+## User Guide
 
-1. 程序启动后，点击"选择特征图文件夹"按钮，选择包含特征图和ROI掩码的文件夹：
-   - 文件夹中必须包含一个名为`mask.nii.gz`的ROI掩码文件
-   - 其他`.nii`或`.nii.gz`文件将被视为特征图文件
+1. After launching the program, click the **"Select Feature Map Folder"** button to choose a folder containing the feature maps and ROI mask:  
+   - The folder must contain a file named `mask.nii.gz` as the ROI mask  
+   - Other `.nii` or `.nii.gz` files will be treated as feature maps
 
-2. 使用左侧控制面板：
-   - 从下拉菜单中选择要可视化的特征
-   - 调整透明度下拉框来改变特征图的可见度
-   - 查看特征预测方向说明，了解不同特征的预测倾向
-   - 观察阴性和阳性参考示例，进行对比分析
+2. Use the control panel on the left:  
+   - Select the feature to visualize from the dropdown menu  
+   - Adjust the opacity dropdown to change feature map visibility  
+   - Review the feature prediction direction guide to understand predictive tendencies  
+   - View negative and positive reference examples for comparative analysis
 
-3. 在3D视图窗口中：
-   - 使用鼠标左键旋转模型
-   - 使用鼠标右键或滚轮缩放
-   - 使用鼠标中键平移视图
+3. In the 3D view window:  
+   - Rotate the model with the left mouse button  
+   - Zoom with the right mouse button or scroll wheel  
+   - Pan the view with the middle mouse button
 
-## 参考示例设置
+## Reference Example Setup
 
-程序需要在运行目录下包含`reference_examples`文件夹，其结构如下：
+The program requires a `reference_examples` folder in the run directory with the following structure:
 
 ```
 reference_examples/
@@ -64,35 +64,36 @@ reference_examples/
     └── mask.nii.gz
 ```
 
-- `negative`文件夹：存放阴性参考示例
-- `positive`文件夹：存放阳性参考示例
-- 每个文件夹必须包含对应的`mask.nii.gz`文件
-- 特征文件名必须与主窗口中显示的特征名称相匹配
 
-## 特征预测方向说明
+- The `negative` folder stores negative reference examples  
+- The `positive` folder stores positive reference examples  
+- Each folder must include the corresponding `mask.nii.gz` file  
+- Feature file names must match the feature names shown in the main window
 
-- 高值指向阴性的特征：
-  - square_glcm_MaximumProbability
+## Feature Prediction Direction Guide
 
-- 高值指向阳性的特征：
-  - square_glcm_DifferenceAverage
-  - square_glrlm_RunPercentage
-  - square_glrlm_ShortRunEmphasis
+- **Features where higher values indicate a negative prediction:**
+  - `square_glcm_MaximumProbability`
 
-## 文件要求
+- **Features where higher values indicate a positive prediction:**
+  - `square_glcm_DifferenceAverage`  
+  - `square_glrlm_RunPercentage`  
+  - `square_glrlm_ShortRunEmphasis`
 
-- 特征图文件：必须是`.nii`或`.nii.gz`格式
-- ROI掩码文件：必须是`mask.nii.gz`
-- 所有文件必须具有相同的维度和物理空间位置
-- 参考示例文件必须与主特征文件具有相同的命名规则
+## File Requirements
 
-## 故障排除
+- **Feature map files**: must be in `.nii` or `.nii.gz` format  
+- **ROI mask file**: must be named `mask.nii.gz`  
+- All files must have the same dimensions and spatial alignment  
+- Reference example files must follow the same naming rules as the main feature files
 
-如果程序无法启动或运行出错，请检查：
+## Troubleshooting
 
-1. 是否已运行`setup.bat`完成环境配置
-2. 文件夹结构是否正确
-3. 参考示例文件名是否与特征文件名匹配
-4. 所有文件格式是否正确
+If the program fails to start or encounters errors, please check the following:
 
-如果问题仍然存在，请尝试重新运行`setup.bat`重置环境。 
+1. Ensure that `setup.bat` was run to complete the environment setup  
+2. Verify that the folder structure is correct  
+3. Ensure reference example filenames match the feature filenames  
+4. Check that all file formats are correct
+
+If the issue persists, try re-running `setup.bat` to reset the environment.
